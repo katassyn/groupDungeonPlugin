@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.util.*;
@@ -31,6 +32,9 @@ public class DungeonManager {
     private final JavaPlugin plugin;
     private final DatabaseManager databaseManager;
     private final Map<UUID, Integer> playerStages;
+    private final Map<UUID, String> activeDungeons;
+    private final Map<UUID, UUID> memberLeaders;
+    private final Map<UUID, BukkitTask> dungeonTimers;
 
     private static final int debuggingFlag = 1;
 
@@ -40,6 +44,9 @@ public class DungeonManager {
         this.categories = new LinkedHashMap<>();
         this.dungeons = new HashMap<>();
         this.playerStages = new HashMap<>();
+        this.activeDungeons = new HashMap<>();
+        this.memberLeaders = new HashMap<>();
+        this.dungeonTimers = new HashMap<>();
         loadDungeonConfig();
         loadPreviewItems();
     }
@@ -78,6 +85,20 @@ public class DungeonManager {
                     if (dSec.contains("keyId") && dSec.contains("keyDisplayName")) {
                         dungeon.setKeyId(dSec.getString("keyId"));
                         dungeon.setKeyDisplayName(dSec.getString("keyDisplayName"));
+                    }
+                    if (dSec.contains("entryWarp")) {
+                        dungeon.setEntryWarp(dSec.getString("entryWarp"));
+                    }
+                    if (dSec.isConfigurationSection("stages")) {
+                        ConfigurationSection stagesSec = dSec.getConfigurationSection("stages");
+                        for (String stageKey : stagesSec.getKeys(false)) {
+                            ConfigurationSection s = stagesSec.getConfigurationSection(stageKey);
+                            int number = s.getInt("number", Integer.parseInt(stageKey));
+                            String sDesc = s.getString("description", "");
+                            String warp = s.getString("warp", "");
+                            String mob = s.getString("triggerMob");
+                            dungeon.addQuestStage(new QuestStage(number, sDesc, warp, mob));
+                        }
                     }
                     dungeons.put(fullId, dungeon);
                     category.addDungeon(dungeon);
@@ -225,19 +246,8 @@ public class DungeonManager {
             }
         }
 
-        String warpCommand = "warp " + dungeonId.toLowerCase();
+        String warpCommand = "warp " + (dungeon.getEntryWarp() != null ? dungeon.getEntryWarp() : dungeonId.toLowerCase());
         String entryMessage = "§aEntering dungeon: §f" + dungeon.getName();
-
-        if (dungeonId.equals("mythology_odyssey")) {
-            warpCommand = "warp m1";
-            entryMessage = "§aEntering The Odyssey of Shadows";
-        } else if (dungeonId.equals("mythology_poseidon")) {
-            warpCommand = "warp m2";
-            entryMessage = "§aEntering Poseidon's Mist Isle";
-        } else if (dungeonId.equals("mythology_zeus")) {
-            warpCommand = "warp m3";
-            entryMessage = "§aEntering Throne of Zeus (Mount Olympus)";
-        }
 
         for (Player member : partyMembers) {
             member.sendMessage("§6Preparing to enter dungeon...");
@@ -252,9 +262,13 @@ public class DungeonManager {
         for (Player member : partyMembers) {
             member.sendMessage(entryMessage);
             member.sendMessage("§eGood luck on your adventure!");
+            memberLeaders.put(member.getUniqueId(), leader.getUniqueId());
         }
 
-        playerStages.put(leader.getUniqueId(), 1);
+        activeDungeons.put(leader.getUniqueId(), dungeonId);
+        playerStages.put(leader.getUniqueId(), 0);
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> endDungeon(leader, false), 20L * 60 * 30);
+        dungeonTimers.put(leader.getUniqueId(), task);
 
         if (debuggingFlag == 1) {
             plugin.getLogger().info("Party led by " + leader.getName() + " entered dungeon " + dungeon.getName());
@@ -276,7 +290,7 @@ public class DungeonManager {
         int stageIndex = playerStages.getOrDefault(leader.getUniqueId(), 0);
         List<QuestStage> stages = dungeon.getQuestStages();
         if (stageIndex >= stages.size()) {
-            leader.sendMessage("§cNo more stages in this dungeon.");
+            endDungeon(leader, true);
             return;
         }
 
@@ -284,11 +298,55 @@ public class DungeonManager {
         PartyManager partyManager = new PartyManager(plugin);
         List<Player> members = partyManager.getPartyMembers(leader);
         for (Player member : members) {
-            member.performCommand("warp " + stage.getWarp());
+            if (stage.getWarp() != null && !stage.getWarp().isEmpty()) {
+                member.performCommand("warp " + stage.getWarp());
+            }
             member.sendMessage("§a" + stage.getDescription());
         }
 
-        playerStages.put(leader.getUniqueId(), stageIndex + 1);
+        stageIndex++;
+        playerStages.put(leader.getUniqueId(), stageIndex);
+        if (stageIndex >= stages.size()) {
+            endDungeon(leader, true);
+        }
+    }
+
+    /**
+     * Handles mob deaths and advances stages when needed.
+     *
+     * @param killer player who killed the mob
+     * @param mobName name of the mob
+     */
+    public void handleMobDeath(Player killer, String mobName) {
+        UUID leaderId = memberLeaders.get(killer.getUniqueId());
+        if (leaderId == null) return;
+        String dungeonId = activeDungeons.get(leaderId);
+        if (dungeonId == null) return;
+        Dungeon dungeon = dungeons.get(dungeonId);
+        int stageIndex = playerStages.getOrDefault(leaderId, 0);
+        List<QuestStage> stages = dungeon.getQuestStages();
+        if (stageIndex >= stages.size()) return;
+        QuestStage stage = stages.get(stageIndex);
+        if (stage.getTriggerMob() != null && ChatColor.stripColor(mobName).equalsIgnoreCase(ChatColor.stripColor(stage.getTriggerMob()))) {
+            Player leader = Bukkit.getPlayer(leaderId);
+            if (leader != null) {
+                advanceStage(leader, dungeonId);
+            }
+        }
+    }
+
+    private void endDungeon(Player leader, boolean success) {
+        String dungeonId = activeDungeons.remove(leader.getUniqueId());
+        BukkitTask task = dungeonTimers.remove(leader.getUniqueId());
+        if (task != null) task.cancel();
+        playerStages.remove(leader.getUniqueId());
+
+        PartyManager pm = new PartyManager(plugin);
+        List<Player> members = pm.getPartyMembers(leader);
+        for (Player member : members) {
+            memberLeaders.remove(member.getUniqueId());
+            member.sendMessage(success ? "§aDungeon completed!" : "§cDungeon failed!");
+        }
     }
 
     /**

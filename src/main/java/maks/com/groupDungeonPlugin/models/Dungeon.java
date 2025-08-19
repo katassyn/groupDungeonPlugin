@@ -26,6 +26,9 @@ public class Dungeon {
     private String keyId;               // Key identifier
     private String keyDisplayName;      // Key display name
 
+    // Warp configuration
+    private String entryWarp;           // Warp used to enter the dungeon
+
     // Preview items mapped by slot
     private Map<Integer, ItemStack> previewItems;
 
@@ -60,6 +63,7 @@ public class Dungeon {
         this.keyDisplayName = null;
         this.previewItems = new HashMap<>();
         this.questStages = new ArrayList<>();
+        this.entryWarp = null;
     }
 
     /**
@@ -93,6 +97,7 @@ public class Dungeon {
         this.keyDisplayName = keyDisplayName;
         this.previewItems = new HashMap<>();
         this.questStages = new ArrayList<>();
+        this.entryWarp = null;
     }
 
     /**
@@ -276,5 +281,13 @@ public class Dungeon {
      */
     public boolean requiresKey() {
         return keyId != null && !keyId.isEmpty();
+    }
+
+    public String getEntryWarp() {
+        return entryWarp;
+    }
+
+    public void setEntryWarp(String entryWarp) {
+        this.entryWarp = entryWarp;
     }
 }

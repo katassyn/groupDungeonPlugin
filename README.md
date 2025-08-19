@@ -43,38 +43,40 @@ Administrators can edit the reward preview in game using `/edit_preview <dungeon
 
 ### Dungeon Configuration
 
+Each dungeon is defined in `dungeons.yml` inside its category. Besides basic
+information like name and level requirements you can now configure keys, warps
+and quest stages:
+
 ```yaml
-dungeons:
-  example-dungeon-id:
-    name: "Example Dungeon"
-    description: "An example dungeon for testing purposes"
-    entrance:
-      world: "world"
-      x: 0
-      y: 64
-      z: 0
-      yaw: 0
-      pitch: 0
-    entry-fee: 100
-    min-party-size: 2
-    max-party-size: 5
-    quests:
-      # Blood difficulty quests
-      blood:
-        example-blood-quest-id:
-          name: "Blood Quest 1"
-          description: "A blood difficulty quest"
-          required-level: 10
-          reward-experience: 100
-          reward-money: 50
-          spawn:
-            world: "world"
-            x: 100
-            y: 64
-            z: 100
-            yaw: 0
-            pitch: 0
+categories:
+  mythology:
+    dungeons:
+      odyssey:
+        name: "The Odyssey of Shadows"
+        description: "Journey through the trials of Odysseus with dark twists"
+        tier: 1
+        requiredLevel: 20
+        minPartySize: 1
+        maxPartySize: 3
+        icon: TRIDENT
+        keyId: TRIPWIRE_HOOK            # optional key material
+        keyDisplayName: "&6Shadow Key"  # optional key display name
+        entryWarp: m1                   # warp used when entering
+        stages:
+          1:
+            description: "Arrive at the haunted shores"
+            warp: m1_s1
+            triggerMob: "Shore Guardian"   # killing this mob advances the stage
+          2:
+            description: "Defeat the shadow cyclops"
+            warp: m1_s2
+            triggerMob: "Shadow Cyclops"
 ```
+
+`entryWarp` sets the warp command executed when the party enters the dungeon.
+Each stage contains a description sent to the party, a warp to teleport to and
+an optional `triggerMob` name. When a mob with that name is killed the stage
+advances automatically.
 
 ## Integration with Party System
 
