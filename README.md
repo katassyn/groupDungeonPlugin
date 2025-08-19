@@ -26,7 +26,7 @@ The plugin uses a `dungeons.yml` file to store dungeon and quest data. An exampl
 
 ### Database Configuration
 
-Preview items for each dungeon are stored in a MySQL database. Configure the connection in `config.yml`:
+Reward previews for each dungeon are stored in a MySQL database. Configure the connection in `config.yml`:
 
 ```yaml
 database:
@@ -39,7 +39,7 @@ database:
   table-prefix: ""
 ```
 
-Administrators can edit the list of preview items in game using `/edit_drops <dungeon_id>`; closing the GUI will persist changes to MySQL.
+Administrators can edit the reward preview in game using `/edit_preview <dungeon_id>`; closing the GUI will persist changes to MySQL.
 
 ### Dungeon Configuration
 

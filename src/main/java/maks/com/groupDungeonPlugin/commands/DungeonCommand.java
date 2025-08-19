@@ -104,7 +104,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (subCommand.equals("preview")) {
                 Dungeon dungeon = dungeonManager.getDungeon(id);
                 if (dungeon != null) {
-                    guiManager.openDropPreviewGUI(player, dungeon.getId());
+                    guiManager.openPreviewGUI(player, dungeon.getId());
                     return true;
                 }
                 
@@ -141,7 +141,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
         player.sendMessage("§e/party_dungeon <category> §7- Open the dungeon selection GUI for a category");
         player.sendMessage("§e/party_dungeon category <id> §7- Open the dungeon selection GUI for a category");
         player.sendMessage("§e/party_dungeon enter <dungeon> §7- Enter a dungeon");
-        player.sendMessage("§e/party_dungeon preview <dungeon> §7- Preview drops for a dungeon");
+        player.sendMessage("§e/party_dungeon preview <dungeon> §7- Preview rewards for a dungeon");
     }
     
     /**

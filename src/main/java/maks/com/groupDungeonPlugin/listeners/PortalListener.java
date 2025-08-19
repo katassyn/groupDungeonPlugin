@@ -98,27 +98,6 @@ public class PortalListener implements Listener {
         portalLocations.put("fantasy_spire", new PortalLocation("world", -610, -58, -929));
         portalLocations.put("fantasy_citadel", new PortalLocation("world", -605, -58, -929));
 
-        // Elemental Challenges dungeons
-        portalLocations.put("elemental_inferno", new PortalLocation("world", -625, -58, -924));
-        portalLocations.put("elemental_trench", new PortalLocation("world", -620, -58, -924));
-        portalLocations.put("elemental_peaks", new PortalLocation("world", -615, -58, -924));
-        portalLocations.put("elemental_core", new PortalLocation("world", -610, -58, -924));
-        portalLocations.put("elemental_sanctum", new PortalLocation("world", -605, -58, -924));
-
-        // Cosmic Adventures dungeons
-        portalLocations.put("cosmic_belt", new PortalLocation("world", -625, -58, -919));
-        portalLocations.put("cosmic_xeno", new PortalLocation("world", -620, -58, -919));
-        portalLocations.put("cosmic_corridor", new PortalLocation("world", -615, -58, -919));
-        portalLocations.put("cosmic_nexus", new PortalLocation("world", -610, -58, -919));
-        portalLocations.put("cosmic_horizon", new PortalLocation("world", -605, -58, -919));
-
-        // Horror dungeons
-        portalLocations.put("horror_asylum", new PortalLocation("world", -625, -58, -914));
-        portalLocations.put("horror_manor", new PortalLocation("world", -620, -58, -914));
-        portalLocations.put("horror_cemetery", new PortalLocation("world", -615, -58, -914));
-        portalLocations.put("horror_dimension", new PortalLocation("world", -610, -58, -914));
-        portalLocations.put("horror_torment", new PortalLocation("world", -605, -58, -914));
-
         if (debuggingFlag == 1) {
             plugin.getLogger().info("Created " + portalLocations.size() + " default portal locations");
         }
