@@ -4,8 +4,10 @@ import maks.com.groupDungeonPlugin.models.Dungeon;
 import maks.com.groupDungeonPlugin.models.DungeonCategory;
 import maks.com.groupDungeonPlugin.models.DungeonDrop;
 import maks.com.groupDungeonPlugin.models.DungeonKey;
+import maks.com.groupDungeonPlugin.database.MySQLManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -19,7 +21,7 @@ public class DungeonManager {
     private final Map<String, DungeonCategory> categories;
     private final Map<String, Dungeon> dungeons;
     private final JavaPlugin plugin;
-    private final DatabaseManager databaseManager;
+    private final MySQLManager mySQLManager;
 
     // Debug flag
     private final static int debuggingFlag = 1;
@@ -28,11 +30,11 @@ public class DungeonManager {
      * Creates a new dungeon manager.
      *
      * @param plugin The plugin instance
-     * @param databaseManager The database manager
+     * @param mySQLManager The database manager for preview items
      */
-    public DungeonManager(JavaPlugin plugin, DatabaseManager databaseManager) {
+    public DungeonManager(JavaPlugin plugin, MySQLManager mySQLManager) {
         this.plugin = plugin;
-        this.databaseManager = databaseManager;
+        this.mySQLManager = mySQLManager;
         this.categories = new HashMap<>();
         this.dungeons = new HashMap<>();
         initializeCategories();
@@ -544,23 +546,16 @@ public class DungeonManager {
      * Loads drops from the database.
      */
     private void loadDropsFromDatabase() {
-        Map<String, List<DungeonDrop>> allDrops = databaseManager.loadAllDrops();
+        for (Dungeon dungeon : dungeons.values()) {
+            Map<Integer, ItemStack> items = mySQLManager.loadPreviewItems(dungeon.getId());
+            dungeon.clearDrops();
 
-        for (Map.Entry<String, List<DungeonDrop>> entry : allDrops.entrySet()) {
-            String dungeonId = entry.getKey();
-            List<DungeonDrop> drops = entry.getValue();
+            items.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .forEach(e -> dungeon.addDrop(new DungeonDrop(e.getValue())));
 
-            Dungeon dungeon = dungeons.get(dungeonId);
-            if (dungeon != null) {
-                // Clear existing drops and add the ones from the database
-                dungeon.clearDrops();
-                for (DungeonDrop drop : drops) {
-                    dungeon.addDrop(drop);
-                }
-
-                if (debuggingFlag == 1) {
-                    plugin.getLogger().info("Loaded " + drops.size() + " drops for dungeon " + dungeon.getName());
-                }
+            if (debuggingFlag == 1) {
+                plugin.getLogger().info("Loaded " + items.size() + " drops for dungeon " + dungeon.getName());
             }
         }
     }
@@ -785,7 +780,12 @@ public class DungeonManager {
     public void saveDrops(String dungeonId) {
         Dungeon dungeon = dungeons.get(dungeonId);
         if (dungeon != null) {
-            databaseManager.saveDrops(dungeonId, dungeon.getPossibleDrops());
+            Map<Integer, ItemStack> map = new HashMap<>();
+            int index = 0;
+            for (DungeonDrop drop : dungeon.getPossibleDrops()) {
+                map.put(index++, drop.toItemStack());
+            }
+            mySQLManager.savePreviewItems(dungeonId, map);
 
             if (debuggingFlag == 1) {
                 plugin.getLogger().info("Saved " + dungeon.getPossibleDrops().size() + 

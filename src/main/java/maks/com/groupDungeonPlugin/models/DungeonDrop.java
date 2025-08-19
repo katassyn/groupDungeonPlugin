@@ -5,22 +5,26 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * Represents a possible dungeon drop.
- * Simplified to only show visual representation of what can be obtained.
+ * Represents a possible dungeon drop. Wraps a full ItemStack so custom
+ * metadata such as enchantments are preserved when stored in the database.
  */
 public class DungeonDrop {
-    private final Material material;    // Item material
-    private final String displayName;   // Item name in English
+    private final ItemStack item; // Stored item
 
     /**
-     * Creates a new dungeon drop.
+     * Creates a new dungeon drop from material and display name.
      *
-     * @param material The material of the item
+     * @param material    The material of the item
      * @param displayName The display name of the item
      */
     public DungeonDrop(Material material, String displayName) {
-        this.material = material;
-        this.displayName = displayName;
+        ItemStack stack = new ItemStack(material);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(displayName);
+            stack.setItemMeta(meta);
+        }
+        this.item = stack;
     }
 
     /**
@@ -29,13 +33,7 @@ public class DungeonDrop {
      * @param item The ItemStack to create the drop from
      */
     public DungeonDrop(ItemStack item) {
-        this.material = item.getType();
-
-        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-            this.displayName = item.getItemMeta().getDisplayName();
-        } else {
-            this.displayName = formatMaterialName(material.name());
-        }
+        this.item = item.clone();
     }
 
     /**
@@ -44,7 +42,7 @@ public class DungeonDrop {
      * @return The material
      */
     public Material getMaterial() {
-        return material;
+        return item.getType();
     }
 
     /**
@@ -53,7 +51,10 @@ public class DungeonDrop {
      * @return The display name
      */
     public String getDisplayName() {
-        return displayName;
+        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+            return item.getItemMeta().getDisplayName();
+        }
+        return formatMaterialName(item.getType().name());
     }
 
     /**
@@ -62,20 +63,12 @@ public class DungeonDrop {
      * @return The ItemStack representation of this drop
      */
     public ItemStack toItemStack() {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-
-        if (meta != null) {
-            meta.setDisplayName(displayName.replace("&", "§"));
-            item.setItemMeta(meta);
-        }
-
-        return item;
+        return item.clone();
     }
 
     /**
      * Formats a material name to be more readable.
-     * 
+     *
      * @param materialName The material name to format
      * @return The formatted material name
      */
@@ -94,3 +87,4 @@ public class DungeonDrop {
         return result.toString().trim();
     }
 }
+
