@@ -1,9 +1,10 @@
 package maks.com.groupDungeonPlugin.models;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a single dungeon.
@@ -23,8 +24,8 @@ public class Dungeon {
     private String keyId;               // Key identifier
     private String keyDisplayName;      // Key display name
 
-    // List of possible drops (for preview)
-    private final List<DungeonDrop> possibleDrops;
+    // Preview items stored by slot
+    private final Map<Integer, ItemStack> previewItems;
 
     /**
      * Creates a new dungeon.
@@ -52,7 +53,7 @@ public class Dungeon {
         this.categoryId = categoryId;
         this.keyId = null;
         this.keyDisplayName = null;
-        this.possibleDrops = new ArrayList<>();
+        this.previewItems = new HashMap<>();
     }
 
     /**
@@ -84,7 +85,7 @@ public class Dungeon {
         this.categoryId = categoryId;
         this.keyId = keyId;
         this.keyDisplayName = keyDisplayName;
-        this.possibleDrops = new ArrayList<>();
+        this.previewItems = new HashMap<>();
     }
 
     /**
@@ -169,39 +170,29 @@ public class Dungeon {
     }
 
     /**
-     * Gets all possible drops for this dungeon.
+     * Gets the map of preview items for this dungeon.
      *
-     * @return A list of possible drops
+     * @return preview item map
      */
-    public List<DungeonDrop> getPossibleDrops() {
-        return possibleDrops;
+    public Map<Integer, ItemStack> getPreviewItems() {
+        return previewItems;
     }
 
     /**
-     * Adds a drop to the list of possible drops.
+     * Replaces the current preview items with the provided map.
      *
-     * @param drop The drop to add
+     * @param items new preview items
      */
-    public void addDrop(DungeonDrop drop) {
-        possibleDrops.add(drop);
+    public void setPreviewItems(Map<Integer, ItemStack> items) {
+        previewItems.clear();
+        previewItems.putAll(items);
     }
 
     /**
-     * Removes a drop from the list of possible drops.
-     *
-     * @param index The index of the drop to remove
+     * Removes all preview items.
      */
-    public void removeDrop(int index) {
-        if (index >= 0 && index < possibleDrops.size()) {
-            possibleDrops.remove(index);
-        }
-    }
-
-    /**
-     * Clears all drops from the list of possible drops.
-     */
-    public void clearDrops() {
-        possibleDrops.clear();
+    public void clearPreviewItems() {
+        previewItems.clear();
     }
 
     /**

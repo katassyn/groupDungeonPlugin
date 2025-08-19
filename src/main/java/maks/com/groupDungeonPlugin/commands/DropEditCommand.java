@@ -2,7 +2,6 @@ package maks.com.groupDungeonPlugin.commands;
 
 import maks.com.groupDungeonPlugin.api.DungeonManager;
 import maks.com.groupDungeonPlugin.api.GUIManager;
-import maks.com.groupDungeonPlugin.gui.DropEditGUI;
 import maks.com.groupDungeonPlugin.models.Dungeon;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,6 +18,7 @@ import java.util.Map;
  */
 public class DropEditCommand implements CommandExecutor, TabCompleter {
     private final DungeonManager dungeonManager;
+    private final GUIManager guiManager;
     private static final int debuggingFlag = 1;
 
     /**
@@ -29,6 +29,7 @@ public class DropEditCommand implements CommandExecutor, TabCompleter {
      */
     public DropEditCommand(DungeonManager dungeonManager, GUIManager guiManager) {
         this.dungeonManager = dungeonManager;
+        this.guiManager = guiManager;
     }
 
     /**
@@ -76,8 +77,7 @@ public class DropEditCommand implements CommandExecutor, TabCompleter {
         }
 
         // Open the new drop edit GUI
-        DropEditGUI gui = new DropEditGUI(player, dungeon, dungeonManager, "main");
-        gui.open();
+        guiManager.openDropPreviewGUI(player, dungeonId, true);
 
         return true;
     }

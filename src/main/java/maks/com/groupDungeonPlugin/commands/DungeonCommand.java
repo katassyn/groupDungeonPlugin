@@ -104,7 +104,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             if (subCommand.equals("preview")) {
                 Dungeon dungeon = dungeonManager.getDungeon(id);
                 if (dungeon != null) {
-                    guiManager.openDropPreviewGUI(player, dungeon.getId());
+                    guiManager.openDropPreviewGUI(player, dungeon.getId(), false);
                     return true;
                 }
                 

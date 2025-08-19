@@ -2,10 +2,11 @@ package maks.com.groupDungeonPlugin.api;
 
 import maks.com.groupDungeonPlugin.models.Dungeon;
 import maks.com.groupDungeonPlugin.models.DungeonCategory;
-import maks.com.groupDungeonPlugin.models.DungeonDrop;
 import maks.com.groupDungeonPlugin.models.DungeonKey;
+import maks.com.groupDungeonPlugin.database.MySQLManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class DungeonManager {
     private final Map<String, DungeonCategory> categories;
     private final Map<String, Dungeon> dungeons;
     private final JavaPlugin plugin;
-    private final DatabaseManager databaseManager;
+    private final MySQLManager mySQLManager;
 
     // Debug flag
     private final static int debuggingFlag = 1;
@@ -28,16 +29,16 @@ public class DungeonManager {
      * Creates a new dungeon manager.
      *
      * @param plugin The plugin instance
-     * @param databaseManager The database manager
+     * @param mySQLManager The database manager for preview items
      */
-    public DungeonManager(JavaPlugin plugin, DatabaseManager databaseManager) {
+    public DungeonManager(JavaPlugin plugin, MySQLManager mySQLManager) {
         this.plugin = plugin;
-        this.databaseManager = databaseManager;
+        this.mySQLManager = mySQLManager;
         this.categories = new HashMap<>();
         this.dungeons = new HashMap<>();
         initializeCategories();
         initializeDungeons();
-        loadDropsFromDatabase();
+        loadPreviewItemsFromDatabase();
     }
 
     /**
@@ -71,32 +72,6 @@ public class DungeonManager {
         );
         categories.put(fantasy.getId(), fantasy);
 
-        // Elemental Challenges
-        DungeonCategory elemental = new DungeonCategory(
-            "elemental",
-            "Elemental Challenges",
-            "Master the elemental forces",
-            Material.BLAZE_POWDER
-        );
-        categories.put(elemental.getId(), elemental);
-
-        // Cosmic Adventures
-        DungeonCategory cosmic = new DungeonCategory(
-            "cosmic",
-            "Cosmic Adventures",
-            "Journey to the stars and beyond",
-            Material.END_PORTAL_FRAME
-        );
-        categories.put(cosmic.getId(), cosmic);
-
-        // Horror
-        DungeonCategory horror = new DungeonCategory(
-            "horror",
-            "Horror",
-            "Face your deepest fears",
-            Material.WITHER_SKELETON_SKULL
-        );
-        categories.put(horror.getId(), horror);
 
         if (debuggingFlag == 1) {
             plugin.getLogger().info("Initialized " + categories.size() + " dungeon categories");
@@ -322,218 +297,7 @@ public class DungeonManager {
         dungeons.put(citadel.getId(), citadel);
         categories.get(citadel.getCategoryId()).addDungeon(citadel);
 
-        // Elemental Challenges dungeons
-        Dungeon inferno = new Dungeon(
-            "elemental_inferno",
-            "Inferno Depths of the Fire Titan",
-            "Descend into the molten core to challenge the Fire Titan",
-            1,  // tier
-            35, // requiredLevel
-            2,  // minPartySize
-            3,  // maxPartySize
-            Material.MAGMA_BLOCK,
-            "elemental"
-        );
-        dungeons.put(inferno.getId(), inferno);
-        categories.get(inferno.getCategoryId()).addDungeon(inferno);
 
-        Dungeon trench = new Dungeon(
-            "elemental_trench",
-            "Abyssal Trench of the Kraken",
-            "Dive into the deepest ocean to face the legendary sea monster",
-            2,  // tier
-            55, // requiredLevel
-            2,  // minPartySize
-            4,  // maxPartySize
-            Material.DARK_PRISMARINE,
-            "elemental"
-        );
-        dungeons.put(trench.getId(), trench);
-        categories.get(trench.getCategoryId()).addDungeon(trench);
-
-        Dungeon peaks = new Dungeon(
-            "elemental_peaks",
-            "Windswept Peaks of the Storm Eagles",
-            "Ascend the highest mountains where the storm eagles nest",
-            3,  // tier
-            75, // requiredLevel
-            3,  // minPartySize
-            4,  // maxPartySize
-            Material.FEATHER,
-            "elemental"
-        );
-        dungeons.put(peaks.getId(), peaks);
-        categories.get(peaks.getCategoryId()).addDungeon(peaks);
-
-        Dungeon core = new Dungeon(
-            "elemental_core",
-            "Earthen Core of the Ancient Golem",
-            "Journey to the center of the earth to awaken the stone guardian",
-            4,  // tier
-            95, // requiredLevel
-            3,  // minPartySize
-            5,  // maxPartySize
-            Material.MOSSY_COBBLESTONE,
-            "elemental"
-        );
-        dungeons.put(core.getId(), core);
-        categories.get(core.getCategoryId()).addDungeon(core);
-
-        Dungeon sanctum = new Dungeon(
-            "elemental_sanctum",
-            "Tempest Sanctum of the Lightning Lord",
-            "Brave the eternal storm to challenge the master of lightning",
-            5,  // tier
-            115, // requiredLevel
-            4,  // minPartySize
-            5,  // maxPartySize
-            Material.LIGHTNING_ROD,
-            "elemental"
-        );
-        dungeons.put(sanctum.getId(), sanctum);
-        categories.get(sanctum.getCategoryId()).addDungeon(sanctum);
-
-        // Cosmic Adventures dungeons
-        Dungeon belt = new Dungeon(
-            "cosmic_belt",
-            "Shattered Belt of the Fallen Star",
-            "Navigate the asteroid field of a destroyed celestial body",
-            1,  // tier
-            40, // requiredLevel
-            2,  // minPartySize
-            3,  // maxPartySize
-            Material.NETHER_STAR,
-            "cosmic"
-        );
-        dungeons.put(belt.getId(), belt);
-        categories.get(belt.getCategoryId()).addDungeon(belt);
-
-        Dungeon xeno = new Dungeon(
-            "cosmic_xeno",
-            "Xeno-9: The Living Planet",
-            "Explore a sentient world that may not want you to leave",
-            2,  // tier
-            60, // requiredLevel
-            2,  // minPartySize
-            4,  // maxPartySize
-            Material.SLIME_BLOCK,
-            "cosmic"
-        );
-        dungeons.put(xeno.getId(), xeno);
-        categories.get(xeno.getCategoryId()).addDungeon(xeno);
-
-        Dungeon corridor = new Dungeon(
-            "cosmic_corridor",
-            "Astral Corridor of Distorted Reality",
-            "Travel through a passage where the laws of physics don't apply",
-            3,  // tier
-            80, // requiredLevel
-            3,  // minPartySize
-            4,  // maxPartySize
-            Material.ENDER_PEARL,
-            "cosmic"
-        );
-        dungeons.put(corridor.getId(), corridor);
-        categories.get(corridor.getCategoryId()).addDungeon(corridor);
-
-        Dungeon nexus = new Dungeon(
-            "cosmic_nexus",
-            "Nebula Nexus of the Cosmic Entities",
-            "Confront the ancient beings that exist between the stars",
-            4,  // tier
-            100, // requiredLevel
-            3,  // minPartySize
-            5,  // maxPartySize
-            Material.PURPLE_STAINED_GLASS,
-            "cosmic"
-        );
-        dungeons.put(nexus.getId(), nexus);
-        categories.get(nexus.getCategoryId()).addDungeon(nexus);
-
-        Dungeon horizon = new Dungeon(
-            "cosmic_horizon",
-            "Event Horizon of Eternal Darkness",
-            "Venture to the edge of a black hole where time stands still",
-            5,  // tier
-            120, // requiredLevel
-            4,  // minPartySize
-            5,  // maxPartySize
-            Material.BLACK_CONCRETE,
-            "cosmic"
-        );
-        dungeons.put(horizon.getId(), horizon);
-        categories.get(horizon.getCategoryId()).addDungeon(horizon);
-
-        // Horror dungeons
-        Dungeon asylum = new Dungeon(
-            "horror_asylum",
-            "Screaming Halls of Arkham Asylum",
-            "Survive the nightmarish corridors of the abandoned mental institution",
-            1,  // tier
-            45, // requiredLevel
-            2,  // minPartySize
-            3,  // maxPartySize
-            Material.IRON_DOOR,
-            "horror"
-        );
-        dungeons.put(asylum.getId(), asylum);
-        categories.get(asylum.getCategoryId()).addDungeon(asylum);
-
-        Dungeon manor = new Dungeon(
-            "horror_manor",
-            "Bloodstained Manor of Lord Varkill",
-            "Uncover the dark secrets of the vampire lord's estate",
-            2,  // tier
-            65, // requiredLevel
-            2,  // minPartySize
-            4,  // maxPartySize
-            Material.REDSTONE,
-            "horror"
-        );
-        dungeons.put(manor.getId(), manor);
-        categories.get(manor.getCategoryId()).addDungeon(manor);
-
-        Dungeon cemetery = new Dungeon(
-            "horror_cemetery",
-            "Forgotten Cemetery of Lost Souls",
-            "Walk among the restless dead in the ancient burial ground",
-            3,  // tier
-            85, // requiredLevel
-            3,  // minPartySize
-            4,  // maxPartySize
-            Material.SKELETON_SKULL,
-            "horror"
-        );
-        dungeons.put(cemetery.getId(), cemetery);
-        categories.get(cemetery.getCategoryId()).addDungeon(cemetery);
-
-        Dungeon dimension = new Dungeon(
-            "horror_dimension",
-            "Nightmare Dimension of the Mind Flayer",
-            "Enter the realm of a creature that feeds on fear and thought",
-            4,  // tier
-            105, // requiredLevel
-            3,  // minPartySize
-            5,  // maxPartySize
-            Material.ENDER_EYE,
-            "horror"
-        );
-        dungeons.put(dimension.getId(), dimension);
-        categories.get(dimension.getCategoryId()).addDungeon(dimension);
-
-        Dungeon torment = new Dungeon(
-            "horror_torment",
-            "Halls of Torment",
-            "Face your deepest fears in the labyrinth of eternal suffering",
-            5,  // tier
-            125, // requiredLevel
-            4,  // minPartySize
-            5,  // maxPartySize
-            Material.SOUL_FIRE,
-            "horror"
-        );
-        dungeons.put(torment.getId(), torment);
-        categories.get(torment.getCategoryId()).addDungeon(torment);
 
         if (debuggingFlag == 1) {
             plugin.getLogger().info("Initialized " + dungeons.size() + " dungeons");
@@ -543,24 +307,13 @@ public class DungeonManager {
     /**
      * Loads drops from the database.
      */
-    private void loadDropsFromDatabase() {
-        Map<String, List<DungeonDrop>> allDrops = databaseManager.loadAllDrops();
+    private void loadPreviewItemsFromDatabase() {
+        for (Dungeon dungeon : dungeons.values()) {
+            Map<Integer, ItemStack> items = mySQLManager.loadPreviewItems(dungeon.getId());
+            dungeon.setPreviewItems(items);
 
-        for (Map.Entry<String, List<DungeonDrop>> entry : allDrops.entrySet()) {
-            String dungeonId = entry.getKey();
-            List<DungeonDrop> drops = entry.getValue();
-
-            Dungeon dungeon = dungeons.get(dungeonId);
-            if (dungeon != null) {
-                // Clear existing drops and add the ones from the database
-                dungeon.clearDrops();
-                for (DungeonDrop drop : drops) {
-                    dungeon.addDrop(drop);
-                }
-
-                if (debuggingFlag == 1) {
-                    plugin.getLogger().info("Loaded " + drops.size() + " drops for dungeon " + dungeon.getName());
-                }
+            if (debuggingFlag == 1) {
+                plugin.getLogger().info("Loaded " + items.size() + " preview items for dungeon " + dungeon.getName());
             }
         }
     }
@@ -695,12 +448,6 @@ public class DungeonManager {
             warpCommand = "warp a" + dungeonId.charAt(dungeonId.length() - 1);
         } else if (dungeonId.startsWith("fantasy_")) {
             warpCommand = "warp f" + dungeonId.charAt(dungeonId.length() - 1);
-        } else if (dungeonId.startsWith("elemental_")) {
-            warpCommand = "warp e" + dungeonId.charAt(dungeonId.length() - 1);
-        } else if (dungeonId.startsWith("cosmic_")) {
-            warpCommand = "warp c" + dungeonId.charAt(dungeonId.length() - 1);
-        } else if (dungeonId.startsWith("horror_")) {
-            warpCommand = "warp h" + dungeonId.charAt(dungeonId.length() - 1);
         }
 
         // Send pre-entry message
@@ -785,11 +532,10 @@ public class DungeonManager {
     public void saveDrops(String dungeonId) {
         Dungeon dungeon = dungeons.get(dungeonId);
         if (dungeon != null) {
-            databaseManager.saveDrops(dungeonId, dungeon.getPossibleDrops());
-
+            mySQLManager.savePreviewItems(dungeonId, dungeon.getPreviewItems());
             if (debuggingFlag == 1) {
-                plugin.getLogger().info("Saved " + dungeon.getPossibleDrops().size() + 
-                                       " drops for dungeon " + dungeon.getName());
+                plugin.getLogger().info("Saved " + dungeon.getPreviewItems().size() +
+                        " preview items for dungeon " + dungeon.getName());
             }
         }
     }

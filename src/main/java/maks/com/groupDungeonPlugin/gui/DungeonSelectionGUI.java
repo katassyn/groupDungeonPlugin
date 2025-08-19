@@ -236,7 +236,7 @@ public class DungeonSelectionGUI extends GUI {
                 // Get the plugin instance and open drop preview GUI
                 GroupDungeonPlugin plugin = (GroupDungeonPlugin) Bukkit.getPluginManager().getPlugin("GroupDungeonPlugin");
                 if (plugin != null) {
-                    plugin.getGuiManager().openDropPreviewGUI(player, dungeon.getId());
+                    plugin.getGuiManager().openDropPreviewGUI(player, dungeon.getId(), false);
 
                     if (debuggingFlag == 1) {
                         Bukkit.getLogger().info("[DungeonSelectionGUI] Player " + player.getName() + 
