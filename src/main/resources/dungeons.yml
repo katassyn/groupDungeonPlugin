@@ -12,6 +12,16 @@ categories:
         minPartySize: 1
         maxPartySize: 3
         icon: TRIDENT
+        entryWarp: m1
+        stages:
+          1:
+            description: "Arrive at the haunted shores"
+            warp: m1_s1
+            triggerMob: "Shore Guardian"
+          2:
+            description: "Defeat the shadow cyclops"
+            warp: m1_s2
+            triggerMob: "Shadow Cyclops"
       poseidon:
         name: "Poseidon's Mist Isle"
         description: "Navigate the treacherous waters of Poseidon's domain"
@@ -20,6 +30,16 @@ categories:
         minPartySize: 2
         maxPartySize: 4
         icon: HEART_OF_THE_SEA
+        entryWarp: m2
+        stages:
+          1:
+            description: "Secure the misty beach"
+            warp: m2_s1
+            triggerMob: "Mist Sentinel"
+          2:
+            description: "Face the sea serpent"
+            warp: m2_s2
+            triggerMob: "Sea Serpent"
       zeus:
         name: "Mount Olympus"
         description: "Challenge the gods atop Mount Olympus"
@@ -28,6 +48,16 @@ categories:
         minPartySize: 3
         maxPartySize: 5
         icon: LIGHTNING_ROD
+        entryWarp: m3
+        stages:
+          1:
+            description: "Climb the sacred mountain"
+            warp: m3_s1
+            triggerMob: "Olympus Guard"
+          2:
+            description: "Defeat Zeus himself"
+            warp: m3_s2
+            triggerMob: "Zeus"
       daedalus:
         name: "Daedalus' Eternal Labyrinth"
         description: "Find your way through the ever-changing maze"

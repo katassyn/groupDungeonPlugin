@@ -9,6 +9,7 @@ import maks.com.groupDungeonPlugin.commands.DungeonCommand;
 import maks.com.groupDungeonPlugin.commands.PreviewEditCommand;
 import maks.com.groupDungeonPlugin.commands.PartyDungeonCommand;
 import maks.com.groupDungeonPlugin.listeners.GUIListener;
+import maks.com.groupDungeonPlugin.listeners.DungeonMobListener;
 import maks.com.groupDungeonPlugin.listeners.PortalListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -86,6 +87,7 @@ public final class GroupDungeonPlugin extends JavaPlugin {
         // Register listeners
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
         getServer().getPluginManager().registerEvents(new PortalListener(this, dungeonManager), this);
+        getServer().getPluginManager().registerEvents(new DungeonMobListener(dungeonManager), this);
 
         getLogger().info("GroupDungeonPlugin has been enabled!");
         getLogger().info("Debug mode: " + (getConfig().getInt("debug") == 1 ? "ON" : "OFF"));
