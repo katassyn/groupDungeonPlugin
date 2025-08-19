@@ -1,0 +1,136 @@
+categories:
+  mythology:
+    name: "Mythology"
+    description: "Ancient legends and mythological adventures"
+    icon: GOLDEN_HELMET
+    dungeons:
+      odyssey:
+        name: "The Odyssey of Shadows"
+        description: "Journey through the trials of Odysseus with dark twists"
+        tier: 1
+        requiredLevel: 20
+        minPartySize: 1
+        maxPartySize: 3
+        icon: TRIDENT
+      poseidon:
+        name: "Poseidon's Mist Isle"
+        description: "Navigate the treacherous waters of Poseidon's domain"
+        tier: 2
+        requiredLevel: 40
+        minPartySize: 2
+        maxPartySize: 4
+        icon: HEART_OF_THE_SEA
+      zeus:
+        name: "Mount Olympus"
+        description: "Challenge the gods atop Mount Olympus"
+        tier: 3
+        requiredLevel: 60
+        minPartySize: 3
+        maxPartySize: 5
+        icon: LIGHTNING_ROD
+      daedalus:
+        name: "Daedalus' Eternal Labyrinth"
+        description: "Find your way through the ever-changing maze"
+        tier: 4
+        requiredLevel: 80
+        minPartySize: 3
+        maxPartySize: 5
+        icon: COBWEB
+      souls:
+        name: "Fields of Immortal Souls"
+        description: "Journey through the afterlife to challenge Hades himself"
+        tier: 5
+        requiredLevel: 100
+        minPartySize: 5
+        maxPartySize: 5
+        icon: SOUL_LANTERN
+  ancient:
+    name: "Ancient Civilizations"
+    description: "Explore the wonders of the ancient world"
+    icon: CHISELED_SANDSTONE
+    dungeons:
+      atlantis:
+        name: "Sunken Spires of Atlantis"
+        description: "Explore the mysterious underwater city"
+        tier: 1
+        requiredLevel: 25
+        minPartySize: 2
+        maxPartySize: 3
+        icon: PRISMARINE_BRICKS
+      pyramid:
+        name: "Pyramid of Pharaoh Khufu's Curse"
+        description: "Navigate the trapped corridors of the ancient pyramid"
+        tier: 2
+        requiredLevel: 45
+        minPartySize: 2
+        maxPartySize: 4
+        icon: SANDSTONE_STAIRS
+      gardens:
+        name: "Hanging Gardens of Queen Amytis"
+        description: "Discover the secrets hidden within the legendary gardens"
+        tier: 3
+        requiredLevel: 65
+        minPartySize: 3
+        maxPartySize: 4
+        icon: FLOWERING_AZALEA
+      colosseum:
+        name: "Bloodstained Colosseum of Emperor Titus"
+        description: "Fight for glory in the ancient Roman arena"
+        tier: 4
+        requiredLevel: 85
+        minPartySize: 3
+        maxPartySize: 5
+        icon: IRON_BARS
+      wall:
+        name: "Dragon Emperor's Forbidden Wall"
+        description: "Scale the massive wall and face the guardians within"
+        tier: 5
+        requiredLevel: 105
+        minPartySize: 4
+        maxPartySize: 5
+        icon: MOSSY_STONE_BRICK_WALL
+  fantasy:
+    name: "Fantasy Realms"
+    description: "Magical worlds of fantasy and wonder"
+    icon: DRAGON_EGG
+    dungeons:
+      drakonis:
+        name: "Lair of Drakonis the Undying"
+        description: "Confront the immortal dragon in its volcanic lair"
+        tier: 1
+        requiredLevel: 30
+        minPartySize: 2
+        maxPartySize: 3
+        icon: DRAGON_HEAD
+      woods:
+        name: "Whispering Woods of Eternal Twilight"
+        description: "Navigate the enchanted forest where day never comes"
+        tier: 2
+        requiredLevel: 50
+        minPartySize: 2
+        maxPartySize: 4
+        icon: DARK_OAK_LOG
+      caverns:
+        name: "Crystal Caverns of the Fae Kingdom"
+        description: "Discover the hidden realm of the fae beneath the earth"
+        tier: 3
+        requiredLevel: 70
+        minPartySize: 3
+        maxPartySize: 4
+        icon: AMETHYST_CLUSTER
+      spire:
+        name: "Celestial Spire of the Ascended Mage"
+        description: "Climb the tower of the most powerful wizard in the realm"
+        tier: 4
+        requiredLevel: 90
+        minPartySize: 3
+        maxPartySize: 5
+        icon: END_ROD
+      citadel:
+        name: "Shadowfell Citadel of the Banished King"
+        description: "Enter the dark fortress of the exiled monarch"
+        tier: 5
+        requiredLevel: 110
+        minPartySize: 4
+        maxPartySize: 5
+        icon: NETHERITE_BLOCK

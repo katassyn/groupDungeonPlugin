@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Manages MySQL operations for preview items.
  */
-public class MySQLManager {
+public class DatabaseManager {
 
     private final JavaPlugin plugin;
     private HikariDataSource dataSource;
@@ -29,7 +29,7 @@ public class MySQLManager {
      *
      * @param plugin owning plugin
      */
-    public MySQLManager(JavaPlugin plugin) {
+    public DatabaseManager(JavaPlugin plugin) {
         this.plugin = plugin;
 
         ConfigurationSection section = plugin.getConfig().getConfigurationSection("database");

@@ -4,7 +4,7 @@ import maks.com.groupDungeonPlugin.api.DungeonManager;
 import maks.com.groupDungeonPlugin.api.GUIManager;
 import maks.com.groupDungeonPlugin.api.PartyIntegrationAPI;
 import maks.com.groupDungeonPlugin.api.PartyManager;
-import maks.com.groupDungeonPlugin.database.MySQLManager;
+import maks.com.groupDungeonPlugin.database.DatabaseManager;
 import maks.com.groupDungeonPlugin.commands.DungeonCommand;
 import maks.com.groupDungeonPlugin.commands.DropEditCommand;
 import maks.com.groupDungeonPlugin.commands.PartyDungeonCommand;
@@ -17,7 +17,7 @@ public final class GroupDungeonPlugin extends JavaPlugin {
     private DungeonManager dungeonManager;
     private GUIManager guiManager;
     private PartyManager partyManager;
-    private MySQLManager mySQLManager;
+    private DatabaseManager databaseManager;
 
     /**
      * Gets the dungeon manager.
@@ -51,8 +51,8 @@ public final class GroupDungeonPlugin extends JavaPlugin {
      *
      * @return The database manager
      */
-    public MySQLManager getMySQLManager() {
-        return mySQLManager;
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
     @Override
@@ -67,13 +67,16 @@ public final class GroupDungeonPlugin extends JavaPlugin {
         }
 
         // Initialize managers
-        this.mySQLManager = new MySQLManager(this);
+        this.databaseManager = new DatabaseManager(this);
+
+        // Save default dungeon configuration
+        saveResource("dungeons.yml", false);
 
         // Initialize party API
         PartyIntegrationAPI.initialize();
 
         this.partyManager = new PartyManager(this);
-        this.dungeonManager = new DungeonManager(this, mySQLManager);
+        this.dungeonManager = new DungeonManager(this, databaseManager);
         this.guiManager = new GUIManager(this, dungeonManager);
 
         // Set plugin instance for DungeonKey
@@ -85,7 +88,7 @@ public final class GroupDungeonPlugin extends JavaPlugin {
         getCommand("edit_drops").setExecutor(new DropEditCommand(dungeonManager, guiManager));
 
         // Register listeners
-        getServer().getPluginManager().registerEvents(new GUIListener(this, guiManager, dungeonManager), this);
+        getServer().getPluginManager().registerEvents(new GUIListener(), this);
         getServer().getPluginManager().registerEvents(new PortalListener(this, dungeonManager), this);
 
         getLogger().info("GroupDungeonPlugin has been enabled!");
@@ -97,8 +100,8 @@ public final class GroupDungeonPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Close database connection
-        if (mySQLManager != null) {
-            mySQLManager.close();
+        if (databaseManager != null) {
+            databaseManager.close();
         }
 
         getLogger().info("GroupDungeonPlugin has been disabled!");
