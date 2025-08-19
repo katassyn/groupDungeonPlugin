@@ -77,15 +77,11 @@ public class CategorySelectionGUI extends GUI {
         String[] orderedCategoryIds = {
             "mythology",
             "ancient",
-            "fantasy",
-            "elemental",
-            "cosmic",
-            "horror"
+            "fantasy"
         };
-
         // Place categories in the center area in a visually appealing way
         // Using vertical arrangement with spaces between categories
-        int[] slots = {19, 22, 25, 28, 31, 34};
+        int[] slots = {19, 22, 25};
 
         for (int i = 0; i < orderedCategoryIds.length; i++) {
             String categoryId = orderedCategoryIds[i];

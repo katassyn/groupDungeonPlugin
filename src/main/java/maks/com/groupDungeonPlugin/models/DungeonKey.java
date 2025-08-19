@@ -1,6 +1,7 @@
 package maks.com.groupDungeonPlugin.models;
 
 import org.bukkit.Material;
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -140,8 +141,8 @@ public class DungeonKey {
             return false;
         }
 
-        String name = meta.getDisplayName();
-        String formattedKeyName = displayName.replace("&", "§");
+        String name = ChatColor.stripColor(meta.getDisplayName());
+        String formattedKeyName = ChatColor.stripColor(displayName.replace("&", "§"));
 
         return name.equals(formattedKeyName);
     }

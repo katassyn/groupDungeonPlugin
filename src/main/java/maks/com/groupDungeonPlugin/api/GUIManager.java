@@ -2,7 +2,7 @@ package maks.com.groupDungeonPlugin.api;
 
 import maks.com.groupDungeonPlugin.models.Dungeon;
 import maks.com.groupDungeonPlugin.models.DungeonCategory;
-import maks.com.groupDungeonPlugin.models.DungeonDrop;
+import maks.com.groupDungeonPlugin.gui.PreviewGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,9 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Manages GUI interfaces for the dungeon plugin.
@@ -184,143 +182,21 @@ public class GUIManager {
     public void openDropPreviewGUI(Player player, String dungeonId) {
         Dungeon dungeon = dungeonManager.getDungeon(dungeonId);
         if (dungeon == null) return;
-
-        // Creating inventory
-        Inventory inv = Bukkit.createInventory(null, 54, "§8Possible Drops - " + dungeon.getName());
-
-        // Filling background with white glass panes
-        ItemStack background = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-        ItemMeta meta = background.getItemMeta();
-        meta.setDisplayName(" ");
-        background.setItemMeta(meta);
-
-        for (int i = 0; i < 54; i++) {
-            inv.setItem(i, background);
-        }
-
-        // Adding dungeon information
-        ItemStack dungeonItem = new ItemStack(dungeon.getIcon());
-        ItemMeta dungeonMeta = dungeonItem.getItemMeta();
-        dungeonMeta.setDisplayName("§e" + dungeon.getName());
-
-        List<String> dungeonLore = new ArrayList<>();
-        dungeonLore.add("§7" + dungeon.getDescription());
-        dungeonLore.add("");
-        dungeonLore.add("§7Tier: §f" + dungeon.getTier());
-        dungeonLore.add("§7Required Level: §f" + dungeon.getRequiredLevel() + "+");
-        dungeonLore.add("");
-        dungeonLore.add("§7These are the possible drops from this dungeon");
-
-        dungeonMeta.setLore(dungeonLore);
-        dungeonItem.setItemMeta(dungeonMeta);
-
-        inv.setItem(4, dungeonItem);
-
-        // Adding drops to GUI
-        List<DungeonDrop> drops = dungeon.getPossibleDrops();
-        addDropsToPreviewGUI(inv, drops);
-
-        // Adding back button
-        ItemStack back = new ItemStack(Material.ARROW);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.setDisplayName("§cBack");
-        back.setItemMeta(backMeta);
-
-        inv.setItem(49, back);
-
-        // Opening inventory
-        player.openInventory(inv);
+        PreviewGUI gui = new PreviewGUI(player, dungeon, dungeonManager, false);
+        gui.open();
     }
 
-    /**
-     * Adds drops to the preview GUI.
-     *
-     * @param inv The inventory to add drops to
-     * @param drops The drops to add
-     */
-    private void addDropsToPreviewGUI(Inventory inv, List<DungeonDrop> drops) {
-        // Start at slot 19 (third row, first column)
-        int[] slots = {
-            19, 20, 21, 22, 23, 24, 25, 26,
-            28, 29, 30, 31, 32, 33, 34, 35,
-            37, 38, 39, 40, 41, 42, 43, 44
-        };
-
-        int index = 0;
-        for (DungeonDrop drop : drops) {
-            if (index >= slots.length) break; // Maximum items that can fit
-
-            // Convert drop to ItemStack
-            ItemStack item = drop.toItemStack();
-
-            // Add to inventory
-            inv.setItem(slots[index], item);
-            index++;
-        }
-    }
-
-
-    /**
-     * Opens the drop edit GUI for a player.
-     *
-     * @param player The player to show the GUI to
-     * @param dungeonId The ID of the dungeon to edit drops for
-     */
     public void openDropEditGUI(Player player, String dungeonId) {
-        // Check permission
         if (!player.hasPermission("partydungeon.admin")) {
             player.sendMessage("§cYou don't have permission to use this.");
             return;
         }
-
         Dungeon dungeon = dungeonManager.getDungeon(dungeonId);
         if (dungeon == null) {
             player.sendMessage("§cDungeon not found: " + dungeonId);
             return;
         }
-
-        // Use the new improved DropEditGUI
-        maks.com.groupDungeonPlugin.gui.DropEditGUI gui = new maks.com.groupDungeonPlugin.gui.DropEditGUI(player, dungeon, dungeonManager, "main");
+        PreviewGUI gui = new PreviewGUI(player, dungeon, dungeonManager, true);
         gui.open();
-    }
-
-    /**
-     * Adds drops to the edit GUI with remove options.
-     *
-     * @param inv The inventory to add drops to
-     * @param drops The drops to add
-     */
-    private void addDropsToEditGUI(Inventory inv, List<DungeonDrop> drops) {
-        // Start at slot 19 (third row, first column)
-        int[] slots = {
-            19, 20, 21, 22, 23, 24, 25, 26,
-            28, 29, 30, 31, 32, 33, 34, 35,
-            37, 38, 39, 40, 41, 42, 43, 44
-        };
-
-        int index = 0;
-        for (DungeonDrop drop : drops) {
-            if (index >= slots.length) break; // Maximum items that can fit
-
-            // Convert drop to ItemStack
-            ItemStack item = drop.toItemStack();
-            ItemMeta itemMeta = item.getItemMeta();
-
-            // Add lore for edit options
-            List<String> lore = new ArrayList<>();
-            if (itemMeta.hasLore()) {
-                lore.addAll(itemMeta.getLore());
-                lore.add("");
-            }
-
-            lore.add("§cShift + Right Click to remove");
-
-            itemMeta.setLore(lore);
-            item.setItemMeta(itemMeta);
-
-            // Add to inventory
-            inv.setItem(slots[index], item);
-            index++;
-        }
     }
 }
