@@ -1,0 +1,27 @@
+name: GroupDungeonPlugin
+version: '1.0'
+main: maks.com.groupDungeonPlugin.GroupDungeonPlugin
+api-version: '1.16'
+authors: [maks]
+description: A plugin for group dungeons with special instances
+
+commands:
+  party_dungeon:
+    description: Main command for the dungeon plugin
+    usage: /party_dungeon [help|list|enter|preview|category]
+    aliases: [pd, dungeon]
+    permission: partydungeon.use
+
+  edit_drops:
+    description: Admin command for editing dungeon drops
+    usage: /edit_drops <dungeon_id>
+    permission: partydungeon.admin
+
+permissions:
+  partydungeon.use:
+    description: Allows use of the party_dungeon command
+    default: true
+
+  partydungeon.admin:
+    description: Allows use of admin commands
+    default: op

@@ -1,0 +1,22 @@
+# Database Configuration
+database:
+  host: node19.icehost.pl
+  port: 5891
+  name: s61121_minecraft
+  username: u61121_T1tlCaXDAv
+  password: PlwA+z7DQ=cS0R7.ixxCxbhD
+  table_prefix: gd_
+
+# Debug Settings
+debug: true
+
+# General Settings
+settings:
+  # Maximum number of dungeons per category to show in GUI
+  max_dungeons_per_category: 14
+  
+  # Whether to check party requirements
+  check_party_requirements: true
+  
+  # Whether to check level requirements
+  check_level_requirements: true
