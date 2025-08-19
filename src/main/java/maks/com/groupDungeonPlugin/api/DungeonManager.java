@@ -2,15 +2,21 @@ package maks.com.groupDungeonPlugin.api;
 
 import maks.com.groupDungeonPlugin.models.Dungeon;
 import maks.com.groupDungeonPlugin.models.DungeonCategory;
-import maks.com.groupDungeonPlugin.models.DungeonKey;
+import maks.com.groupDungeonPlugin.models.QuestStage;
 import maks.com.groupDungeonPlugin.database.DatabaseManager;
 import maks.com.groupDungeonPlugin.api.PartyManager;
+import maks.com.groupDungeonPlugin.api.MyExperienceAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -24,6 +30,7 @@ public class DungeonManager {
     private final Map<String, Dungeon> dungeons;
     private final JavaPlugin plugin;
     private final DatabaseManager databaseManager;
+    private final Map<UUID, Integer> playerStages;
 
     private static final int debuggingFlag = 1;
 
@@ -32,6 +39,7 @@ public class DungeonManager {
         this.databaseManager = databaseManager;
         this.categories = new LinkedHashMap<>();
         this.dungeons = new HashMap<>();
+        this.playerStages = new HashMap<>();
         loadDungeonConfig();
         loadPreviewItems();
     }
@@ -138,7 +146,7 @@ public class DungeonManager {
         // Check if all players have required level
         List<Player> partyMembers = partyManager.getPartyMembers(leader);
         for (Player member : partyMembers) {
-            int playerLevel = 100; // Placeholder for now
+            int playerLevel = getPlayerLevel(member);
             if (playerLevel < dungeon.getRequiredLevel()) {
                 leader.sendMessage("§c" + member.getName() + " does not meet the level requirement (" +
                                   dungeon.getRequiredLevel() + "+).");
@@ -181,24 +189,40 @@ public class DungeonManager {
                 plugin.getLogger().info("Dungeon " + dungeon.getName() + " requires key: " + keyId);
             }
 
-            Material keyMaterial;
+            Material keyMaterial = Material.TRIPWIRE_HOOK;
             try {
-                keyMaterial = Material.getMaterial(keyId.toUpperCase());
-                if (keyMaterial == null) {
-                    keyMaterial = Material.TRIPWIRE_HOOK;
+                Material matched = Material.getMaterial(keyId.toUpperCase());
+                if (matched != null) {
+                    keyMaterial = matched;
                 }
-            } catch (Exception e) {
-                keyMaterial = Material.TRIPWIRE_HOOK;
+            } catch (Exception ignored) {
             }
 
-            DungeonKey key = new DungeonKey(keyId, keyName, keyMaterial);
+            Inventory inv = leader.getInventory();
+            boolean removed = false;
+            String strippedRequired = ChatColor.stripColor(keyName.replace("&", "§"));
+            ItemStack[] contents = inv.getContents();
+            for (int i = 0; i < contents.length; i++) {
+                ItemStack item = contents[i];
+                if (item == null || item.getType() != keyMaterial) continue;
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null || !meta.hasDisplayName()) continue;
+                String stripped = ChatColor.stripColor(meta.getDisplayName());
+                if (stripped.equals(strippedRequired)) {
+                    if (item.getAmount() > 1) {
+                        item.setAmount(item.getAmount() - 1);
+                    } else {
+                        inv.setItem(i, null);
+                    }
+                    removed = true;
+                    break;
+                }
+            }
 
-            if (!key.hasKey(leader.getInventory())) {
+            if (!removed) {
                 leader.sendMessage("§cYou need the key: " + keyName.replace("&", "§"));
                 return false;
             }
-
-            key.consumeKey(leader.getInventory());
         }
 
         String warpCommand = "warp " + dungeonId.toLowerCase();
@@ -230,11 +254,52 @@ public class DungeonManager {
             member.sendMessage("§eGood luck on your adventure!");
         }
 
+        playerStages.put(leader.getUniqueId(), 1);
+
         if (debuggingFlag == 1) {
             plugin.getLogger().info("Party led by " + leader.getName() + " entered dungeon " + dungeon.getName());
         }
 
         return true;
+    }
+
+    /**
+     * Advances the party to the next quest stage for a dungeon.
+     *
+     * @param leader    party leader
+     * @param dungeonId dungeon identifier
+     */
+    public void advanceStage(Player leader, String dungeonId) {
+        Dungeon dungeon = dungeons.get(dungeonId);
+        if (dungeon == null) return;
+
+        int stageIndex = playerStages.getOrDefault(leader.getUniqueId(), 0);
+        List<QuestStage> stages = dungeon.getQuestStages();
+        if (stageIndex >= stages.size()) {
+            leader.sendMessage("§cNo more stages in this dungeon.");
+            return;
+        }
+
+        QuestStage stage = stages.get(stageIndex);
+        PartyManager partyManager = new PartyManager(plugin);
+        List<Player> members = partyManager.getPartyMembers(leader);
+        for (Player member : members) {
+            member.performCommand("warp " + stage.getWarp());
+            member.sendMessage("§a" + stage.getDescription());
+        }
+
+        playerStages.put(leader.getUniqueId(), stageIndex + 1);
+    }
+
+    /**
+     * Gets player level from MyExperiencePlugin if available.
+     */
+    private int getPlayerLevel(Player player) {
+        Plugin exp = Bukkit.getPluginManager().getPlugin("MyExperiencePlugin");
+        if (exp instanceof MyExperienceAPI) {
+            return ((MyExperienceAPI) exp).getPlayerLevel(player);
+        }
+        return 0;
     }
 
     // ---------------------------------------------------------------------

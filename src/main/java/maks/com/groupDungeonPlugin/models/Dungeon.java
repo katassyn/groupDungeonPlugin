@@ -3,7 +3,9 @@ package maks.com.groupDungeonPlugin.models;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +28,9 @@ public class Dungeon {
 
     // Preview items mapped by slot
     private Map<Integer, ItemStack> previewItems;
+
+    // Quest stages for the dungeon
+    private final List<QuestStage> questStages;
 
     /**
      * Creates a new dungeon.
@@ -54,6 +59,7 @@ public class Dungeon {
         this.keyId = null;
         this.keyDisplayName = null;
         this.previewItems = new HashMap<>();
+        this.questStages = new ArrayList<>();
     }
 
     /**
@@ -86,6 +92,7 @@ public class Dungeon {
         this.keyId = keyId;
         this.keyDisplayName = keyDisplayName;
         this.previewItems = new HashMap<>();
+        this.questStages = new ArrayList<>();
     }
 
     /**
@@ -206,6 +213,24 @@ public class Dungeon {
      */
     public void clearPreviewItems() {
         previewItems.clear();
+    }
+
+    /**
+     * Gets the quest stages for this dungeon.
+     *
+     * @return list of quest stages
+     */
+    public List<QuestStage> getQuestStages() {
+        return questStages;
+    }
+
+    /**
+     * Adds a quest stage to this dungeon.
+     *
+     * @param stage stage to add
+     */
+    public void addQuestStage(QuestStage stage) {
+        questStages.add(stage);
     }
 
     /**

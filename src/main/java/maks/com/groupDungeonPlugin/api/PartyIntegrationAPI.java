@@ -128,16 +128,4 @@ public class PartyIntegrationAPI {
         return true;
     }
 
-    /**
-     * Consumes a key from the party leader's inventory
-     * 
-     * @param player A player in the party
-     * @param key The key to consume
-     * @return True if the key was consumed, false if the player is not the leader or doesn't have the key
-     */
-    public static boolean consumePartyLeaderKey(Player player, maks.com.groupDungeonPlugin.models.DungeonKey key) {
-        if (!isPartyLeader(player)) return false;
-
-        return key.consumeKey(player.getInventory());
-    }
 }

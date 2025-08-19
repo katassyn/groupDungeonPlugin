@@ -10,7 +10,6 @@ import maks.com.groupDungeonPlugin.commands.PreviewEditCommand;
 import maks.com.groupDungeonPlugin.commands.PartyDungeonCommand;
 import maks.com.groupDungeonPlugin.listeners.GUIListener;
 import maks.com.groupDungeonPlugin.listeners.PortalListener;
-import maks.com.groupDungeonPlugin.models.DungeonKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class GroupDungeonPlugin extends JavaPlugin {
@@ -78,9 +77,6 @@ public final class GroupDungeonPlugin extends JavaPlugin {
         this.partyManager = new PartyManager(this);
         this.dungeonManager = new DungeonManager(this, databaseManager);
         this.guiManager = new GUIManager(this, dungeonManager);
-
-        // Set plugin instance for DungeonKey
-        DungeonKey.setPlugin(this);
 
         // Register commands
         getCommand("party_dungeon").setExecutor(new PartyDungeonCommand(dungeonManager));
