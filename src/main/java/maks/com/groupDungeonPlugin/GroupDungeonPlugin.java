@@ -6,7 +6,7 @@ import maks.com.groupDungeonPlugin.api.PartyIntegrationAPI;
 import maks.com.groupDungeonPlugin.api.PartyManager;
 import maks.com.groupDungeonPlugin.database.DatabaseManager;
 import maks.com.groupDungeonPlugin.commands.DungeonCommand;
-import maks.com.groupDungeonPlugin.commands.DropEditCommand;
+import maks.com.groupDungeonPlugin.commands.PreviewEditCommand;
 import maks.com.groupDungeonPlugin.commands.PartyDungeonCommand;
 import maks.com.groupDungeonPlugin.listeners.GUIListener;
 import maks.com.groupDungeonPlugin.listeners.PortalListener;
@@ -85,7 +85,7 @@ public final class GroupDungeonPlugin extends JavaPlugin {
         // Register commands
         getCommand("party_dungeon").setExecutor(new PartyDungeonCommand(dungeonManager));
         getCommand("dungeon").setExecutor(new DungeonCommand(dungeonManager, guiManager));
-        getCommand("edit_drops").setExecutor(new DropEditCommand(dungeonManager, guiManager));
+        getCommand("edit_preview").setExecutor(new PreviewEditCommand(dungeonManager, guiManager));
 
         // Register listeners
         getServer().getPluginManager().registerEvents(new GUIListener(), this);

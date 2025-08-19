@@ -179,7 +179,7 @@ public class DungeonSelectionGUI extends GUI {
 
             lore.add("");
             lore.add("§eClick to enter dungeon");
-            lore.add("§eShift + Right Click to view possible drops");
+            lore.add("§eShift + Right Click to view possible rewards");
 
             iconMeta.setLore(lore);
             icon.setItemMeta(iconMeta);
@@ -229,18 +229,18 @@ public class DungeonSelectionGUI extends GUI {
         // Dungeon selection
         Dungeon dungeon = slotToDungeonMap.get(slot);
         if (dungeon != null) {
-            // Shift + Right Click to view drops
+            // Shift + Right Click to view reward preview
             if (event.getClick() == ClickType.SHIFT_RIGHT) {
                 player.closeInventory();
 
-                // Get the plugin instance and open drop preview GUI
+                // Get the plugin instance and open reward preview GUI
                 GroupDungeonPlugin plugin = (GroupDungeonPlugin) Bukkit.getPluginManager().getPlugin("GroupDungeonPlugin");
                 if (plugin != null) {
-                    plugin.getGuiManager().openDropPreviewGUI(player, dungeon.getId());
+                    plugin.getGuiManager().openPreviewGUI(player, dungeon.getId());
 
                     if (debuggingFlag == 1) {
-                        Bukkit.getLogger().info("[DungeonSelectionGUI] Player " + player.getName() + 
-                                               " viewing drops for dungeon: " + dungeon.getName());
+                        Bukkit.getLogger().info("[DungeonSelectionGUI] Player " + player.getName() +
+                                               " viewing rewards for dungeon: " + dungeon.getName());
                     }
                 }
                 return;

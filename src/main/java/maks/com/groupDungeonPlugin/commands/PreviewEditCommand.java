@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Admin command for drop editing.
+ * Admin command for editing reward previews.
  */
-public class DropEditCommand implements CommandExecutor, TabCompleter {
+public class PreviewEditCommand implements CommandExecutor, TabCompleter {
     private final DungeonManager dungeonManager;
     private final GUIManager guiManager;
     private static final int debuggingFlag = 1;
 
     /**
-     * Creates a new drop edit command.
+     * Creates a new preview edit command.
      *
      * @param dungeonManager The dungeon manager
      * @param guiManager The GUI manager
      */
-    public DropEditCommand(DungeonManager dungeonManager, GUIManager guiManager) {
+    public PreviewEditCommand(DungeonManager dungeonManager, GUIManager guiManager) {
         this.dungeonManager = dungeonManager;
         this.guiManager = guiManager;
     }
@@ -57,7 +57,7 @@ public class DropEditCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            player.sendMessage("§cUsage: /edit_drops <dungeon_id>");
+            player.sendMessage("§cUsage: /edit_preview <dungeon_id>");
             listAvailableDungeons(player);
             return true;
         }
@@ -72,11 +72,11 @@ public class DropEditCommand implements CommandExecutor, TabCompleter {
         }
 
         if (debuggingFlag == 1) {
-            player.getServer().getLogger().info("[DropEditCommand] Player " + player.getName() +
-                                               " editing drops for dungeon: " + dungeon.getName());
+            player.getServer().getLogger().info("[PreviewEditCommand] Player " + player.getName() +
+                                               " editing reward preview for dungeon: " + dungeon.getName());
         }
 
-        guiManager.openDropEditGUI(player, dungeonId);
+        guiManager.openPreviewEditGUI(player, dungeonId);
         return true;
     }
 

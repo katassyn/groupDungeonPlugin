@@ -12,9 +12,9 @@ commands:
     aliases: [pd, dungeon]
     permission: partydungeon.use
 
-  edit_drops:
-    description: Admin command for editing dungeon drops
-    usage: /edit_drops <dungeon_id>
+  edit_preview:
+    description: Admin command for editing dungeon reward previews
+    usage: /edit_preview <dungeon_id>
     permission: partydungeon.admin
 
 permissions:

@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Map;
 
 /**
- * GUI used for displaying and editing preview items for a dungeon.
+ * GUI used for displaying and editing reward preview items for a dungeon.
  */
 public class PreviewGUI extends GUI {
     private final Dungeon dungeon;
@@ -19,7 +19,7 @@ public class PreviewGUI extends GUI {
     private final boolean editable;
 
     public PreviewGUI(Player player, Dungeon dungeon, DungeonManager dungeonManager, boolean editable) {
-        super(player, (editable ? "§8Edit Preview - " : "§8Possible Drops - ") + dungeon.getName(), 54);
+        super(player, (editable ? "§8Edit Rewards - " : "§8Possible Rewards - ") + dungeon.getName(), 54);
         this.dungeon = dungeon;
         this.dungeonManager = dungeonManager;
         this.editable = editable;
@@ -73,7 +73,7 @@ public class PreviewGUI extends GUI {
             }
             dungeonManager.savePreviewItems(dungeon.getId());
             player.closeInventory();
-            player.sendMessage("§aPreview items saved.");
+            player.sendMessage("§aReward preview saved.");
         }
     }
 }

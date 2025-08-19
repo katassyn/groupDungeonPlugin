@@ -152,7 +152,7 @@ public class GUIManager {
             lore.add("§7Party Size: §f" + dungeon.getMinPartySize() + "-" + dungeon.getMaxPartySize());
             lore.add("");
             lore.add("§eClick to enter dungeon");
-            lore.add("§eShift + Right Click to view possible drops");
+            lore.add("§eShift + Right Click to view possible rewards");
 
             iconMeta.setLore(lore);
             icon.setItemMeta(iconMeta);
@@ -174,19 +174,19 @@ public class GUIManager {
     }
 
     /**
-     * Opens the drop preview GUI for a player.
+     * Opens the reward preview GUI for a player.
      *
      * @param player The player to show the GUI to
-     * @param dungeonId The ID of the dungeon to show drops for
+     * @param dungeonId The ID of the dungeon to show rewards for
      */
-    public void openDropPreviewGUI(Player player, String dungeonId) {
+    public void openPreviewGUI(Player player, String dungeonId) {
         Dungeon dungeon = dungeonManager.getDungeon(dungeonId);
         if (dungeon == null) return;
         PreviewGUI gui = new PreviewGUI(player, dungeon, dungeonManager, false);
         gui.open();
     }
 
-    public void openDropEditGUI(Player player, String dungeonId) {
+    public void openPreviewEditGUI(Player player, String dungeonId) {
         if (!player.hasPermission("partydungeon.admin")) {
             player.sendMessage("§cYou don't have permission to use this.");
             return;
