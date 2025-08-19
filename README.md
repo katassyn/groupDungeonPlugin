@@ -24,6 +24,23 @@ A Minecraft plugin for creating and managing group dungeons with different diffi
 
 The plugin uses a `dungeons.yml` file to store dungeon and quest data. An example configuration is provided.
 
+### Database Configuration
+
+Preview items for each dungeon are stored in a MySQL database. Configure the connection in `config.yml`:
+
+```yaml
+database:
+  host: "localhost"
+  port: 3306
+  dbname: "groupdungeon"
+  user: "dungeon_user"
+  password: "strong_password"
+  pool-size: 10
+  table-prefix: ""
+```
+
+Administrators can edit the list of preview items in game using `/edit_drops <dungeon_id>`; closing the GUI will persist changes to MySQL.
+
 ### Dungeon Configuration
 
 ```yaml

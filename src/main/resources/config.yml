@@ -1,11 +1,12 @@
 # Database Configuration
 database:
-  host: node19.icehost.pl
-  port: 5891
-  name: s61121_minecraft
-  username: u61121_T1tlCaXDAv
-  password: PlwA+z7DQ=cS0R7.ixxCxbhD
-  table_prefix: gd_
+  host: "localhost"
+  port: 3306
+  dbname: "groupdungeon"
+  user: "dungeon_user"
+  password: "strong_password"
+  pool-size: 10
+  table-prefix: ""
 
 # Debug Settings
 debug: true
